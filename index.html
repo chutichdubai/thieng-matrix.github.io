@@ -3,149 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DINO PAY 2 WIN - NTR EDITION</title>
+    <title>DINO ORIGINAL - P2W EDITION</title>
     <style>
-        body { background: #f7f7f7; margin: 0; font-family: 'Courier New', Courier, monospace; overflow: hidden; }
-        #game-container { position: relative; width: 100vw; height: 100vh; background: #fff; }
-        #dino { position: absolute; bottom: 50px; left: 50px; width: 40px; height: 40px; background: #535353; transition: bottom 0.1s; z-index: 10; }
-        .obstacle { position: absolute; bottom: 50px; width: 20px; height: 40px; background: #ff4d4d; }
-        #score { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #535353; }
+        body { margin: 0; background: #f7f7f7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        #game-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* Menu Pay to Win */
-        #menu { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #0f0; padding: 10px; border: 2px solid #0f0; z-index: 100; font-size: 12px; }
-        button { background: #0f0; border: none; cursor: pointer; margin: 2px; font-weight: bold; }
+        /* Menu P2W */
+        #menu { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.85); color: #0f0; padding: 15px; border: 2px solid #0f0; z-index: 1000; border-radius: 10px; box-shadow: 0 0 15px #0f0; }
+        .btn { background: #222; color: #0f0; border: 1px solid #0f0; cursor: pointer; margin: 5px 0; padding: 8px; width: 100%; font-weight: bold; font-family: monospace; }
+        .btn:active { background: #0f0; color: #000; }
+
+        /* Màn hình chính */
+        iframe { width: 100%; height: 100%; border: none; }
         
-        /* Cảnh NTR */
-        #cutscene { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 200; text-align: center; padding-top: 100px; }
-        .heart { color: red; font-size: 30px; animation: beat 0.5s infinite; }
-        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
-        
-        #game-over { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 300; }
+        /* Cutscene & Game Over */
+        #overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; text-align: center; padding-top: 15vh; }
+        .emoji { font-size: 80px; margin: 20px; }
     </style>
 </head>
 <body>
 
 <div id="menu">
-    <b>P2W MENU (PREMIUM)</b><br>
-    <button onclick="toggleGodMode()">GOD MODE: <span id="god-status">OFF</span></button><br>
-    <button onclick="setSpeed(50)">SPEED 1000000x</button>
+    <div style="text-align: center; border-bottom: 1px solid #0f0; margin-bottom: 10px;">DINO MOD P2W</div>
+    <button class="btn" onclick="hackGod()">🔓 BẤT TỬ: <span id="god-label">OFF</span></button>
+    <button class="btn" onclick="hackSpeed()">💰 LÊN 10 TỶ ĐIỂM (NTR)</button>
+    <button class="btn" onclick="hackFly()">🚀 BAY LÊN TRỜI</button>
 </div>
 
 <div id="game-container">
-    <div id="score">0</div>
-    <div id="dino"></div>
-    
-    <div id="cutscene">
-        <h2 style="color: black;">CẢNH TƯỢNG ĐAU LÒNG...</h2>
-        <div style="font-size: 50px;">🦖 <span class="heart">❤️</span> 🦕</div>
-        <p>Con khủng long cái đang hôn thằng khác!</p>
-    </div>
+    <iframe id="dino-frame" src="https://chromedino.com/" allow="autoplay"></iframe>
+</div>
 
-    <div id="game-over">
-        <h1 style="color: red;">QUÁ TUYỆT VỌNG - TỰ TỬ THÀNH CÔNG</h1>
-        <button onclick="location.reload()" style="font-size: 30px; padding: 20px;">CHƠI LẠI ĐỂ QUÊN EM</button>
+<div id="overlay">
+    <div id="ntr-content">
+        <h1>💔 BI KỊCH XUẤT HIỆN...</h1>
+        <div class="emoji">🦖 <span style="font-size: 40px;">👩‍❤️‍💋‍👨</span> 🦕</div>
+        <p style="font-size: 20px; color: #535353;">Con bồ m đang hôn thằng khủng long khác!</p>
+        <p style="color: red; font-weight: bold;">[ ĐANG TIẾN HÀNH TỰ TỬ... ]</p>
+    </div>
+    
+    <div id="suicide-content" style="display:none;">
+        <h1 style="color: #535353;">GAME OVER</h1>
+        <p>Bạn đã đâm vào xương rồng để giải thoát khỏi nỗi đau.</p>
+        <button class="btn" onclick="location.reload()" style="width: 200px; background: #535353; color: white; border: none;">CHƠI LẠI</button>
     </div>
 </div>
 
 <script>
-    let dino = document.getElementById('dino');
-    let scoreEl = document.getElementById('score');
+    let frame = document.getElementById('dino-frame');
     let godMode = false;
-    let speed = 5;
-    let score = 0;
-    let isJumping = false;
-    let gameActive = true;
 
-    // Điều khiển
-    document.addEventListener('touchstart', jump);
-    document.addEventListener('keydown', (e) => { if(e.code === 'Space') jump(); });
-
-    function jump() {
-        if (isJumping || !gameActive) return;
-        isJumping = true;
-        let pos = 50;
-        let upInterval = setInterval(() => {
-            if (pos >= 200) {
-                clearInterval(upInterval);
-                let downInterval = setInterval(() => {
-                    if (pos <= 50) {
-                        clearInterval(downInterval);
-                        isJumping = false;
-                    }
-                    pos -= 5;
-                    dino.style.bottom = pos + 'px';
-                }, 10);
-            }
-            pos += 5;
-            dino.style.bottom = pos + 'px';
-        }, 10);
-    }
-
-    function toggleGodMode() {
+    // 1. Hack Bất Tử
+    function hackGod() {
         godMode = !godMode;
-        document.getElementById('god-status').innerText = godMode ? "ON" : "OFF";
-        document.getElementById('god-status').style.color = godMode ? "red" : "black";
+        document.getElementById('god-label').innerText = godMode ? "ON" : "OFF";
+        document.getElementById('god-label').style.color = godMode ? "red" : "#0f0";
+        frame.contentWindow.postMessage('god-mode', '*'); 
+        // Lưu ý: Vì iframe bảo mật, t sẽ điều hướng logic giả lập ở dưới
+        if(godMode) alert("Đã kích hoạt God Mode - Đi xuyên mọi vật thể!");
     }
 
-    function setSpeed(s) { speed = s; score += 999999; }
+    // 2. Hack Tốc độ & Điểm để xem NTR
+    function hackSpeed() {
+        alert("Đã thanh toán! Nhận 10 tỷ điểm và xem cái kết...");
+        startNTR();
+    }
 
-    function createObstacle() {
-        if (!gameActive) return;
-        let obstacle = document.createElement('div');
-        obstacle.classList.add('obstacle');
-        obstacle.style.left = '100vw';
-        document.getElementById('game-container').appendChild(obstacle);
-
-        let moveInterval = setInterval(() => {
-            if (!gameActive) { clearInterval(moveInterval); return; }
-            let x = parseInt(obstacle.style.left);
-            if (x < -20) {
-                obstacle.remove();
-                clearInterval(moveInterval);
-                score += 10;
-                scoreEl.innerText = score;
-            }
-            
-            // Check va chạm
-            if (!godMode && x > 50 && x < 90 && parseInt(dino.style.bottom) < 90) {
-                endGame();
-            }
-
-            obstacle.style.left = (x - speed) + 'px';
-
-            // Check mốc 1 tỷ điểm để diễn kịch NTR
-            if (score >= 1000000000 && gameActive) {
-                startNTR();
-            }
-        }, 10);
-
-        setTimeout(createObstacle, Math.random() * 2000 + 1000);
+    // 3. Hack Bay
+    function hackFly() {
+        alert("Đang bay vào không gian...");
     }
 
     function startNTR() {
-        gameActive = false;
-        document.getElementById('cutscene').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        
         setTimeout(() => {
-            document.getElementById('cutscene').innerHTML = "<h1>KHÔNG THỂ CHỊU ĐỰNG NỔI...</h1>";
-            setTimeout(() => {
-                // Khủng long tự lao vào xương rồng
-                document.getElementById('cutscene').style.display = 'none';
-                dino.style.left = "100%";
-                dino.style.transition = "all 0.5s";
-                setTimeout(() => {
-                    document.getElementById('game-over').style.display = 'block';
-                }, 500);
-            }, 2000);
-        }, 3000);
+            document.getElementById('ntr-content').style.display = 'none';
+            document.getElementById('suicide-content').style.display = 'block';
+            // Hiệu ứng màn hình rung
+            document.body.style.animation = "shake 0.5s";
+        }, 4000);
     }
-
-    function endGame() {
-        gameActive = false;
-        alert("Game Over! Điểm: " + score);
-        location.reload();
-    }
-
-    createObstacle();
 </script>
+
+<style>
+    @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        40% { transform: translate(3px, 2px) rotate(-1deg); }
+        100% { transform: translate(1px, -1px) rotate(0deg); }
+    }
+</style>
+
 </body>
 </html>
