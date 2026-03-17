@@ -14,12 +14,12 @@
 <body>
     <canvas id="c"></canvas>
     <div id="text">
-        <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
+        <h1 style="font-size: 2.5em; color: #0f0; text-shadow: 0 0 10px #0f0;">ACCESS GRANTED</h1>
         <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
-        <div id="user-info" class="info">ĐANG QUÉT MỤC TIÊU...</div>
+        <div id="user-info" class="info">ĐANG TRUY QUÉT MỤC TIÊU...</div>
     </div>
 <script>
-    // Hiệu ứng Matrix
+    // Matrix Effect
     var c = document.getElementById("c"); var ctx = c.getContext("2d");
     c.height = window.innerHeight; c.width = window.innerWidth;
     var m = "01".split(""); var drops = [];
@@ -34,21 +34,29 @@
     }
     setInterval(draw, 35);
 
-    // Vòi lấy IP Cloudflare cực mạnh
-    async function check() {
+    // Chiêu cuối: Cloudflare Trace + IPWhois Backup
+    async function getLoc() {
         try {
-            const res = await fetch('https://ipapi.co/json/');
+            const res = await fetch('https://ipwho.is/');
             const d = await res.json();
+            if(!d.success) throw new Error();
             document.getElementById("user-info").innerHTML = `
                 <span style="color:red">IP:</span> ${d.ip} <br>
                 <span style="color:red">VỊ TRÍ:</span> ${d.city}, ${d.region} <br>
-                <span style="color:white; background:red;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
+                <span style="color:white; background:red; padding: 2px;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
             `;
         } catch {
-            document.getElementById("user-info").innerHTML = "LỖI KẾT NỐI SERVER MỸ!";
+            // Backup vòi 2 nếu vòi 1 tịt
+            const res2 = await fetch('https://ipapi.co/json/');
+            const d2 = await res2.json();
+            document.getElementById("user-info").innerHTML = `
+                <span style="color:red">IP:</span> ${d2.ip} <br>
+                <span style="color:red">VỊ TRÍ:</span> ${d2.city}, ${d2.region} <br>
+                <span style="color:white; background:red; padding: 2px;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
+            `;
         }
     }
-    check();
+    getLoc();
 </script>
 </body>
 </html>
