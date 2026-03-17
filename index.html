@@ -2,98 +2,85 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DINO ORIGINAL - P2W EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DINO ORIGINAL HACKER</title>
     <style>
-        body { margin: 0; background: #f7f7f7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
-        #game-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        body { margin: 0; background: #f7f7f7; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
+        /* Menu Mod */
+        #mod-menu {
+            position: fixed; top: 10px; left: 10px; z-index: 1000;
+            background: rgba(0,0,0,0.9); color: #0f0; padding: 10px;
+            border: 2px solid #0f0; border-radius: 5px; width: 150px;
+        }
+        .btn {
+            background: #222; color: #0f0; border: 1px solid #0f0;
+            width: 100%; margin: 3px 0; padding: 5px; cursor: pointer; font-size: 11px;
+        }
+        canvas { display: block; margin: 0 auto; background: #fff; }
         
-        /* Menu P2W */
-        #menu { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.85); color: #0f0; padding: 15px; border: 2px solid #0f0; z-index: 1000; border-radius: 10px; box-shadow: 0 0 15px #0f0; }
-        .btn { background: #222; color: #0f0; border: 1px solid #0f0; cursor: pointer; margin: 5px 0; padding: 8px; width: 100%; font-weight: bold; font-family: monospace; }
-        .btn:active { background: #0f0; color: #000; }
-
-        /* Màn hình chính */
-        iframe { width: 100%; height: 100%; border: none; }
-        
-        /* Cutscene & Game Over */
-        #overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; text-align: center; padding-top: 15vh; }
-        .emoji { font-size: 80px; margin: 20px; }
+        /* Cảnh bi kịch */
+        #overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 2000; text-align: center; padding-top: 15vh;
+        }
     </style>
 </head>
 <body>
 
-<div id="menu">
-    <div style="text-align: center; border-bottom: 1px solid #0f0; margin-bottom: 10px;">DINO MOD P2W</div>
-    <button class="btn" onclick="hackGod()">🔓 BẤT TỬ: <span id="god-label">OFF</span></button>
-    <button class="btn" onclick="hackSpeed()">💰 LÊN 10 TỶ ĐIỂM (NTR)</button>
-    <button class="btn" onclick="hackFly()">🚀 BAY LÊN TRỜI</button>
-</div>
-
-<div id="game-container">
-    <iframe id="dino-frame" src="https://chromedino.com/" allow="autoplay"></iframe>
+<div id="mod-menu">
+    <div style="font-size: 12px; text-align: center; margin-bottom: 5px;">THIENG MOD V4</div>
+    <button class="btn" onclick="toggleGod()">🔓 GOD MODE: <span id="g-st">OFF</span></button>
+    <button class="btn" onclick="startNTR()">💰 PAY 2 WIN (NTR)</button>
 </div>
 
 <div id="overlay">
-    <div id="ntr-content">
-        <h1>💔 BI KỊCH XUẤT HIỆN...</h1>
-        <div class="emoji">🦖 <span style="font-size: 40px;">👩‍❤️‍💋‍👨</span> 🦕</div>
-        <p style="font-size: 20px; color: #535353;">Con bồ m đang hôn thằng khủng long khác!</p>
-        <p style="color: red; font-weight: bold;">[ ĐANG TIẾN HÀNH TỰ TỬ... ]</p>
-    </div>
-    
-    <div id="suicide-content" style="display:none;">
-        <h1 style="color: #535353;">GAME OVER</h1>
-        <p>Bạn đã đâm vào xương rồng để giải thoát khỏi nỗi đau.</p>
-        <button class="btn" onclick="location.reload()" style="width: 200px; background: #535353; color: white; border: none;">CHƠI LẠI</button>
-    </div>
+    <div style="font-size: 60px;">🦖 💔 🦕</div>
+    <h2 style="color: black;">BI KỊCH: NÓ CÓ THẰNG KHÁC RỒI!</h2>
+    <p id="death-msg" style="color: red; font-weight: bold;"></p>
 </div>
 
+<div id="game-area"></div>
+
+<script src="https://cdn.jsdelivr.net/gh/wayou/t-rex-runner/dist/bundle.js"></script>
+
 <script>
-    let frame = document.getElementById('dino-frame');
-    let godMode = false;
+    let isGod = false;
 
-    // 1. Hack Bất Tử
-    function hackGod() {
-        godMode = !godMode;
-        document.getElementById('god-label').innerText = godMode ? "ON" : "OFF";
-        document.getElementById('god-label').style.color = godMode ? "red" : "#0f0";
-        frame.contentWindow.postMessage('god-mode', '*'); 
-        // Lưu ý: Vì iframe bảo mật, t sẽ điều hướng logic giả lập ở dưới
-        if(godMode) alert("Đã kích hoạt God Mode - Đi xuyên mọi vật thể!");
-    }
+    // Chờ game load xong rồi can thiệp
+    window.onload = () => {
+        // Tích hợp game vào game-area
+        new Runner('#game-area');
+    };
 
-    // 2. Hack Tốc độ & Điểm để xem NTR
-    function hackSpeed() {
-        alert("Đã thanh toán! Nhận 10 tỷ điểm và xem cái kết...");
-        startNTR();
-    }
-
-    // 3. Hack Bay
-    function hackFly() {
-        alert("Đang bay vào không gian...");
+    function toggleGod() {
+        isGod = !isGod;
+        document.getElementById('g-st').innerText = isGod ? "ON" : "OFF";
+        document.getElementById('g-st').style.color = isGod ? "red" : "#0f0";
+        
+        // Lệnh hack bất tử chính thức của Google
+        if (isGod) {
+            Runner.instance_.gameOver = function(){};
+        } else {
+            location.reload(); // Reset để tắt bất tử
+        }
     }
 
     function startNTR() {
+        // Lên điểm siêu cao
+        Runner.instance_.distanceRan = 999999999;
+        
+        // Hiện cảnh bi kịch
         document.getElementById('overlay').style.display = 'block';
+        let msg = document.getElementById('death-msg');
         
         setTimeout(() => {
-            document.getElementById('ntr-content').style.display = 'none';
-            document.getElementById('suicide-content').style.display = 'block';
-            // Hiệu ứng màn hình rung
-            document.body.style.animation = "shake 0.5s";
-        }, 4000);
+            msg.innerText = "ĐANG LAO VÀO XƯƠNG RỒNG TỰ TỬ...";
+            setTimeout(() => {
+                msg.innerText = "KẾT THÚC NỖI ĐAU!";
+                setTimeout(() => { location.reload(); }, 2000);
+            }, 2000);
+        }, 2000);
     }
 </script>
-
-<style>
-    @keyframes shake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        20% { transform: translate(-3px, 0px) rotate(1deg); }
-        40% { transform: translate(3px, 2px) rotate(-1deg); }
-        100% { transform: translate(1px, -1px) rotate(0deg); }
-    }
-</style>
-
 </body>
 </html>
