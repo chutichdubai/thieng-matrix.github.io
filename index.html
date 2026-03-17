@@ -7,7 +7,7 @@
         body { background: black; color: #0f0; font-family: monospace; overflow: hidden; margin: 0; }
         #text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; width: 100%; }
         canvas { position: fixed; top: 0; left: 0; }
-        .info { color: #ffff00; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 15px; background: rgba(0,255,0,0.1); display: inline-block; text-align: left; line-height: 1.6; }
+        .info { color: #ffff00; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 15px; background: rgba(0,255,0,0.2); display: inline-block; text-align: left; line-height: 1.6; }
         .warning { color: red; font-weight: bold; animation: blink 0.6s infinite; font-size: 1.2em; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
     </style>
@@ -44,20 +44,40 @@
     }
     setInterval(draw, 35);
 
-    // Vòi lấy địa chỉ siêu ổn định
-    fetch('https://ipapi.co/json/')
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("user-info").innerHTML = `
-            <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
-            <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
-            <span style="color:red">NHÀ MẠNG:</span> <span style="color:white">${data.org}</span> <br>
-            <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
-        `;
-    })
-    .catch(() => {
-        document.getElementById("user-info").innerHTML = "ĐANG VƯỢT TƯỜNG LỬA...";
-    });
+    // Hệ thống vòi đa tầng để chống 'undefined'
+    function getTargetInfo() {
+        const infoBox = document.getElementById("user-info");
+        
+        // Thử vòi 1: ipapi.co (Xịn nhất cho địa chỉ chi tiết)
+        fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(data => {
+            if(!data.ip) throw new Error();
+            infoBox.innerHTML = `
+                <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
+                <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
+                <span style="color:red">NHÀ MẠNG:</span> <span style="color:white">${data.org}</span> <br>
+                <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
+            `;
+        })
+        .catch(() => {
+            // Thử vòi 2 nếu vòi 1 lỗi: ipwho.is
+            fetch('https://ipwho.is/')
+            .then(res => res.json())
+            .then(data => {
+                infoBox.innerHTML = `
+                    <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
+                    <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
+                    <span style="color:red">STATUS:</span> <span style="color:white">FOUND BY BACKUP</span> <br>
+                    <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
+                `;
+            })
+            .catch(() => {
+                infoBox.innerHTML = "<span style='color:red'>HỆ THỐNG ĐANG BỊ CHẶN, VUI LÒNG LOAD LẠI!</span>";
+            });
+        });
+    }
+    getTargetInfo();
 </script>
 </body>
 </html>
