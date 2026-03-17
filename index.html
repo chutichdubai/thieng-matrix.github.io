@@ -6,16 +6,18 @@
     body { background: black; color: #0f0; font-family: monospace; overflow: hidden; margin: 0; }
     #text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; width: 100%; }
     canvas { position: fixed; top: 0; left: 0; }
-    .info { color: yellow; font-size: 1.2em; margin-top: 15px; border: 1px solid #0f0; padding: 10px; background: rgba(0,255,0,0.1); }
+    .info { color: yellow; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 10px; background: rgba(0,255,0,0.1); line-height: 1.5; }
+    .warning { color: red; font-weight: bold; animation: blink 0.5s infinite; }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="text">
-    <h1 style="font-size: 3em; color: #0f0;">ACCESS GRANTED</h1>
-    <p style="font-size: 1.5em;">Master Thieng is watching you...</p>
-    <p style="color: red; font-weight: bold;">[ WARNING: SYSTEM OVERLOAD FROM SILICON VALLEY, USA ]</p>
-    <div id="user-info" class="info">SCANNING TARGET...</div>
+    <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
+    <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
+    <p class="warning">[ WARNING: SYSTEM OVERLOAD FROM USA ]</p>
+    <div id="user-info" class="info">ĐANG QUÉT VỊ TRÍ ĐỐI TƯỢNG...</div>
 </div>
 <script>
     var c = document.getElementById("c");
@@ -41,18 +43,20 @@
     }
     setInterval(draw, 35);
 
-    // Code lấy IP siêu mạnh
-    fetch('https://api.ipify.org?format=json')
+    // Vòi lấy địa chỉ chi tiết (IP, Tỉnh, Huyện, Nhà mạng)
+    fetch('http://ip-api.com/json/?fields=status,message,country,regionName,city,district,zip,lat,lon,isp,org,as,query')
     .then(res => res.json())
     .then(data => {
         document.getElementById("user-info").innerHTML = `
-            <span style="color:red">TARGET FOUND:</span> ${data.ip} <br>
-            <span style="color:red">STATUS:</span> TRACKING... <br>
-            <span style="color:red">LOCATION:</span> CALIFORNIA, USA
+            <span style="color:red">IP:</span> ${data.query} <br>
+            <span style="color:red">VỊ TRÍ:</span> ${data.district ? data.district + ', ' : ''}${data.city}, ${data.regionName} <br>
+            <span style="color:red">NHÀ MẠNG:</span> ${data.isp} <br>
+            <span style="color:red">TỌA ĐỘ:</span> ${data.lat}, ${data.lon} <br>
+            <span style="color:white; background:red;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
         `;
     })
     .catch(() => {
-        document.getElementById("user-info").innerHTML = "BYPASSING FIREWALL...";
+        document.getElementById("user-info").innerHTML = "LỖI: ĐỐI TƯỢNG DÙNG VPN!";
     });
 </script>
 </body>
