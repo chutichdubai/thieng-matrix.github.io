@@ -41,14 +41,14 @@
     }
     setInterval(draw, 35);
 
-    // Code lấy IP uy tín nhất
+    // Code lấy IP siêu mạnh
     fetch('https://api.ipify.org?format=json')
     .then(res => res.json())
     .then(data => {
         document.getElementById("user-info").innerHTML = `
             <span style="color:red">TARGET FOUND:</span> ${data.ip} <br>
             <span style="color:red">STATUS:</span> TRACKING... <br>
-            <span style="color:red">LOCATION:</span> ENCRYPTED
+            <span style="color:red">LOCATION:</span> CALIFORNIA, USA
         `;
     })
     .catch(() => {
