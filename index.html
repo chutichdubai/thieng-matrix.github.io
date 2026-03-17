@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM BREACHED BY THIENG</title>
+    <title>SYSTEM BREACHED</title>
     <style>
         body { background: black; color: #0f0; font-family: monospace; overflow: hidden; margin: 0; }
         #text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; width: 100%; }
         canvas { position: fixed; top: 0; left: 0; }
-        .info { color: #ffff00; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 15px; background: rgba(0,255,0,0.2); display: inline-block; text-align: left; line-height: 1.6; }
+        .info { color: #ffff00; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 15px; background: rgba(0,255,0,0.2); display: inline-block; text-align: left; }
     </style>
 </head>
 <body>
     <canvas id="c"></canvas>
     <div id="text">
-        <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
-        <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
-        <div id="user-info" class="info">ĐANG TRUY QUÉT...</div>
+        <h1 style="font-size: 2em;">ACCESS GRANTED</h1>
+        <div id="user-info" class="info">ĐANG QUÉT...</div>
     </div>
 <script>
-    // Matrix Effect
     var c = document.getElementById("c"); var ctx = c.getContext("2d");
     c.height = window.innerHeight; c.width = window.innerWidth;
     var m = "01".split(""); var drops = [];
@@ -34,24 +32,22 @@
     }
     setInterval(draw, 35);
 
-    // Vòi lấy địa chỉ siêu tốc
-    async function hack() {
-        try {
-            const r = await fetch('https://api.ipify.org?format=json');
-            const d = await r.json();
-            const r2 = await fetch(`https://ipwho.is/${d.ip}`);
-            const d2 = await r2.json();
-            
+    function getInfo() {
+        fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(d => {
             document.getElementById("user-info").innerHTML = `
-                <span style="color:red">IP:</span> ${d2.ip} <br>
-                <span style="color:red">VỊ TRÍ:</span> ${d2.city}, ${d2.region} <br>
-                <span style="color:white; background:red;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
+                IP: ${d.ip} <br>
+                VỊ TRÍ: ${d.city}, ${d.region} <br>
+                TRẠNG THÁI: ĐÃ KHÓA
             `;
-        } catch {
-            document.getElementById("user-info").innerHTML = "LỖI HỆ THỐNG!";
-        }
+        })
+        .catch(() => {
+            document.getElementById("user-info").innerHTML = "ĐANG KẾT NỐI LẠI...";
+            setTimeout(getInfo, 2000);
+        });
     }
-    hack();
+    getInfo();
 </script>
 </body>
 </html>
