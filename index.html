@@ -15,12 +15,11 @@
 <body>
     <canvas id="c"></canvas>
     <div id="text">
-        <h1 style="font-size: 2.5em; color: #0f0; text-shadow: 0 0 10px #0f0;">ACCESS GRANTED</h1>
+        <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
         <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
-        <p class="warning">[ WARNING: SYSTEM OVERLOAD FROM SILICON VALLEY, USA ]</p>
-        <div id="user-info" class="info">ĐANG TRUY QUÉT DỮ LIỆU...</div>
+        <p class="warning">[ WARNING: SYSTEM OVERLOAD FROM USA ]</p>
+        <div id="user-info" class="info">ĐANG TRUY QUÉT MỤC TIÊU...</div>
     </div>
-
 <script>
     var c = document.getElementById("c");
     var ctx = c.getContext("2d");
@@ -45,29 +44,19 @@
     }
     setInterval(draw, 35);
 
-    // Vòi lấy địa chỉ uy tín nhất thế giới hiện nay
-    fetch('https://ipinfo.io/json?token=75638927891781') // Token ảo để bypass nhẹ
+    // Vòi lấy địa chỉ siêu ổn định
+    fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
-        let location = data.city + ", " + data.region;
         document.getElementById("user-info").innerHTML = `
             <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
-            <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${location}</span> <br>
+            <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
             <span style="color:red">NHÀ MẠNG:</span> <span style="color:white">${data.org}</span> <br>
             <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
         `;
     })
     .catch(() => {
-        // Nếu cái trên lỗi thì dùng vòi dự phòng này
-        fetch('https://api.ipify.org?format=json')
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById("user-info").innerHTML = `
-                <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
-                <span style="color:red">STATUS:</span> <span style="color:white">CONNECTED</span> <br>
-                <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">ĐANG QUÉT CHI TIẾT...</span>
-            `;
-        });
+        document.getElementById("user-info").innerHTML = "ĐANG VƯỢT TƯỜNG LỬA...";
     });
 </script>
 </body>
