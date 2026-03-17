@@ -9,8 +9,6 @@
         #text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; width: 100%; }
         canvas { position: fixed; top: 0; left: 0; }
         .info { color: #ffff00; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 15px; background: rgba(0,255,0,0.2); display: inline-block; text-align: left; line-height: 1.6; }
-        .warning { color: red; font-weight: bold; animation: blink 0.6s infinite; font-size: 1.2em; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -18,61 +16,39 @@
     <div id="text">
         <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
         <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
-        <p class="warning">[ WARNING: SYSTEM OVERLOAD FROM USA ]</p>
-        <div id="user-info" class="info">ĐANG TRUY QUÉT VỊ TRÍ...</div>
+        <div id="user-info" class="info">ĐANG QUÉT MỤC TIÊU...</div>
     </div>
-
 <script>
-    // --- HIỆU ỨNG MA TRẬN ---
-    var c = document.getElementById("c");
-    var ctx = c.getContext("2d");
+    // Hiệu ứng Matrix
+    var c = document.getElementById("c"); var ctx = c.getContext("2d");
     c.height = window.innerHeight; c.width = window.innerWidth;
-    var matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
-    matrix = matrix.split("");
-    var font_size = 10;
-    var columns = c.width/font_size;
-    var drops = [];
-    for(var x = 0; x < columns; x++) drops[x] = 1; 
+    var m = "01".split(""); var drops = [];
+    for(var x=0; x<c.width/10; x++) drops[x]=1;
     function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
-        ctx.fillRect(0, 0, c.width, c.height);
-        ctx.fillStyle = "#0F0";
-        ctx.font = font_size + "px arial";
-        for(var i = 0; i < drops.length; i++) {
-            var text = matrix[Math.floor(Math.random()*matrix.length)];
-            ctx.fillText(text, i*font_size, drops[i]*font_size);
-            if(drops[i]*font_size > c.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
+        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
+        ctx.fillStyle = "#0F0"; ctx.font = "10px arial";
+        for(var i=0; i<drops.length; i++) {
+            ctx.fillText(m[Math.floor(Math.random()*m.length)], i*10, drops[i]*10);
+            if(drops[i]*10 > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
         }
     }
     setInterval(draw, 35);
 
-    // --- VÒI LẤY IP & VỊ TRÍ CHI TIẾT ---
-    async function getDetails() {
+    // Vòi lấy IP Cloudflare cực mạnh
+    async function check() {
         try {
-            // Lấy IP từ Cloudflare (Cực nhanh và không bị chặn)
-            const response = await fetch('https://ipapi.co/json/');
-            const data = await response.json();
-            
+            const res = await fetch('https://ipapi.co/json/');
+            const d = await res.json();
             document.getElementById("user-info").innerHTML = `
-                <span style="color:red">TARGET IP:</span> <span style="color:white">${data.ip}</span> <br>
-                <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
-                <span style="color:red">NHÀ MẠNG:</span> <span style="color:white">${data.org}</span> <br>
-                <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
+                <span style="color:red">IP:</span> ${d.ip} <br>
+                <span style="color:red">VỊ TRÍ:</span> ${d.city}, ${d.region} <br>
+                <span style="color:white; background:red;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
             `;
-        } catch (err) {
-            document.getElementById("user-info").innerHTML = "<span style='color:red'>HỆ THỐNG ĐANG QUÉT LẠI...</span>";
-            // Dự phòng vòi 2
-            fetch('https://ipwho.is/').then(r => r.json()).then(d => {
-                document.getElementById("user-info").innerHTML = `
-                    <span style="color:red">IP:</span> <span style="color:white">${d.ip}</span> <br>
-                    <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${d.city}, ${d.region}</span> <br>
-                    <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">ĐÃ KHOÁ MỤC TIÊU</span>
-                `;
-            });
+        } catch {
+            document.getElementById("user-info").innerHTML = "LỖI KẾT NỐI SERVER MỸ!";
         }
     }
-    getDetails();
+    check();
 </script>
 </body>
 </html>
