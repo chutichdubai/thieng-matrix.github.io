@@ -6,16 +6,16 @@
     body { background: black; color: #0f0; font-family: monospace; overflow: hidden; margin: 0; }
     #text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; width: 100%; }
     canvas { position: fixed; top: 0; left: 0; }
-    .info { color: yellow; font-size: 1.2em; margin-top: 10px; }
+    .info { color: yellow; font-size: 1.2em; margin-top: 15px; border: 1px solid #0f0; padding: 10px; background: rgba(0,255,0,0.1); }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="text">
-    <h1 style="font-size: 3em;">ACCESS GRANTED</h1>
+    <h1 style="font-size: 3em; color: #0f0;">ACCESS GRANTED</h1>
     <p style="font-size: 1.5em;">Master Thieng is watching you...</p>
-    <p style="color: red;">[ WARNING: SYSTEM OVERLOAD FROM USA ]</p>
-    <div id="user-info" class="info">Đang quét thông tin đối tượng...</div>
+    <p style="color: red; font-weight: bold;">[ WARNING: SYSTEM OVERLOAD FROM SILICON VALLEY, USA ]</p>
+    <div id="user-info" class="info">SCANNING TARGET...</div>
 </div>
 <script>
     var c = document.getElementById("c");
@@ -41,17 +41,18 @@
     }
     setInterval(draw, 35);
 
-    fetch('https://ipapi.co/json/')
+    // Code lấy IP uy tín nhất
+    fetch('https://api.ipify.org?format=json')
     .then(res => res.json())
     .then(data => {
         document.getElementById("user-info").innerHTML = `
-            FOUND IP: ${data.ip} <br>
-            LOCATION: ${data.city}, ${data.region}, ${data.country_name} <br>
-            NETWORK: ${data.org}
+            <span style="color:red">TARGET FOUND:</span> ${data.ip} <br>
+            <span style="color:red">STATUS:</span> TRACKING... <br>
+            <span style="color:red">LOCATION:</span> ENCRYPTED
         `;
     })
     .catch(() => {
-        document.getElementById("user-info").innerHTML = "Hệ thống bị chặn bởi tường lửa đối tượng!";
+        document.getElementById("user-info").innerHTML = "BYPASSING FIREWALL...";
     });
 </script>
 </body>
