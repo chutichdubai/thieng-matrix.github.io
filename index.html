@@ -3,51 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM BREACHED</title>
+    <title>DINO PAY 2 WIN - NTR EDITION</title>
     <style>
-        body { background: black; color: #0f0; font-family: monospace; overflow: hidden; margin: 0; }
-        #text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; width: 100%; }
-        canvas { position: fixed; top: 0; left: 0; }
-        .info { color: #ffff00; font-size: 1.1em; margin-top: 15px; border: 1px solid #0f0; padding: 15px; background: rgba(0,255,0,0.2); display: inline-block; text-align: left; }
+        body { background: #f7f7f7; margin: 0; font-family: 'Courier New', Courier, monospace; overflow: hidden; }
+        #game-container { position: relative; width: 100vw; height: 100vh; background: #fff; }
+        #dino { position: absolute; bottom: 50px; left: 50px; width: 40px; height: 40px; background: #535353; transition: bottom 0.1s; z-index: 10; }
+        .obstacle { position: absolute; bottom: 50px; width: 20px; height: 40px; background: #ff4d4d; }
+        #score { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #535353; }
+        
+        /* Menu Pay to Win */
+        #menu { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #0f0; padding: 10px; border: 2px solid #0f0; z-index: 100; font-size: 12px; }
+        button { background: #0f0; border: none; cursor: pointer; margin: 2px; font-weight: bold; }
+        
+        /* Cảnh NTR */
+        #cutscene { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 200; text-align: center; padding-top: 100px; }
+        .heart { color: red; font-size: 30px; animation: beat 0.5s infinite; }
+        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
+        
+        #game-over { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 300; }
     </style>
 </head>
 <body>
-    <canvas id="c"></canvas>
-    <div id="text">
-        <h1 style="font-size: 2em;">ACCESS GRANTED</h1>
-        <div id="user-info" class="info">ĐANG QUÉT...</div>
-    </div>
-<script>
-    var c = document.getElementById("c"); var ctx = c.getContext("2d");
-    c.height = window.innerHeight; c.width = window.innerWidth;
-    var m = "01".split(""); var drops = [];
-    for(var x=0; x<c.width/10; x++) drops[x]=1;
-    function draw() {
-        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
-        ctx.fillStyle = "#0F0"; ctx.font = "10px arial";
-        for(var i=0; i<drops.length; i++) {
-            ctx.fillText(m[Math.floor(Math.random()*m.length)], i*10, drops[i]*10);
-            if(drops[i]*10 > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
-        }
-    }
-    setInterval(draw, 35);
 
-    function getInfo() {
-        fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(d => {
-            document.getElementById("user-info").innerHTML = `
-                IP: ${d.ip} <br>
-                VỊ TRÍ: ${d.city}, ${d.region} <br>
-                TRẠNG THÁI: ĐÃ KHÓA
-            `;
-        })
-        .catch(() => {
-            document.getElementById("user-info").innerHTML = "ĐANG KẾT NỐI LẠI...";
-            setTimeout(getInfo, 2000);
-        });
+<div id="menu">
+    <b>P2W MENU (PREMIUM)</b><br>
+    <button onclick="toggleGodMode()">GOD MODE: <span id="god-status">OFF</span></button><br>
+    <button onclick="setSpeed(50)">SPEED 1000000x</button>
+</div>
+
+<div id="game-container">
+    <div id="score">0</div>
+    <div id="dino"></div>
+    
+    <div id="cutscene">
+        <h2 style="color: black;">CẢNH TƯỢNG ĐAU LÒNG...</h2>
+        <div style="font-size: 50px;">🦖 <span class="heart">❤️</span> 🦕</div>
+        <p>Con khủng long cái đang hôn thằng khác!</p>
+    </div>
+
+    <div id="game-over">
+        <h1 style="color: red;">QUÁ TUYỆT VỌNG - TỰ TỬ THÀNH CÔNG</h1>
+        <button onclick="location.reload()" style="font-size: 30px; padding: 20px;">CHƠI LẠI ĐỂ QUÊN EM</button>
+    </div>
+</div>
+
+<script>
+    let dino = document.getElementById('dino');
+    let scoreEl = document.getElementById('score');
+    let godMode = false;
+    let speed = 5;
+    let score = 0;
+    let isJumping = false;
+    let gameActive = true;
+
+    // Điều khiển
+    document.addEventListener('touchstart', jump);
+    document.addEventListener('keydown', (e) => { if(e.code === 'Space') jump(); });
+
+    function jump() {
+        if (isJumping || !gameActive) return;
+        isJumping = true;
+        let pos = 50;
+        let upInterval = setInterval(() => {
+            if (pos >= 200) {
+                clearInterval(upInterval);
+                let downInterval = setInterval(() => {
+                    if (pos <= 50) {
+                        clearInterval(downInterval);
+                        isJumping = false;
+                    }
+                    pos -= 5;
+                    dino.style.bottom = pos + 'px';
+                }, 10);
+            }
+            pos += 5;
+            dino.style.bottom = pos + 'px';
+        }, 10);
     }
-    getInfo();
+
+    function toggleGodMode() {
+        godMode = !godMode;
+        document.getElementById('god-status').innerText = godMode ? "ON" : "OFF";
+        document.getElementById('god-status').style.color = godMode ? "red" : "black";
+    }
+
+    function setSpeed(s) { speed = s; score += 999999; }
+
+    function createObstacle() {
+        if (!gameActive) return;
+        let obstacle = document.createElement('div');
+        obstacle.classList.add('obstacle');
+        obstacle.style.left = '100vw';
+        document.getElementById('game-container').appendChild(obstacle);
+
+        let moveInterval = setInterval(() => {
+            if (!gameActive) { clearInterval(moveInterval); return; }
+            let x = parseInt(obstacle.style.left);
+            if (x < -20) {
+                obstacle.remove();
+                clearInterval(moveInterval);
+                score += 10;
+                scoreEl.innerText = score;
+            }
+            
+            // Check va chạm
+            if (!godMode && x > 50 && x < 90 && parseInt(dino.style.bottom) < 90) {
+                endGame();
+            }
+
+            obstacle.style.left = (x - speed) + 'px';
+
+            // Check mốc 1 tỷ điểm để diễn kịch NTR
+            if (score >= 1000000000 && gameActive) {
+                startNTR();
+            }
+        }, 10);
+
+        setTimeout(createObstacle, Math.random() * 2000 + 1000);
+    }
+
+    function startNTR() {
+        gameActive = false;
+        document.getElementById('cutscene').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('cutscene').innerHTML = "<h1>KHÔNG THỂ CHỊU ĐỰNG NỔI...</h1>";
+            setTimeout(() => {
+                // Khủng long tự lao vào xương rồng
+                document.getElementById('cutscene').style.display = 'none';
+                dino.style.left = "100%";
+                dino.style.transition = "all 0.5s";
+                setTimeout(() => {
+                    document.getElementById('game-over').style.display = 'block';
+                }, 500);
+            }, 2000);
+        }, 3000);
+    }
+
+    function endGame() {
+        gameActive = false;
+        alert("Game Over! Điểm: " + score);
+        location.reload();
+    }
+
+    createObstacle();
 </script>
 </body>
 </html>
