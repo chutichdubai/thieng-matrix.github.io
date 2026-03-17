@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYSTEM BREACHED BY THIENG</title>
     <style>
         body { background: black; color: #0f0; font-family: monospace; overflow: hidden; margin: 0; }
@@ -18,9 +19,11 @@
         <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
         <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
         <p class="warning">[ WARNING: SYSTEM OVERLOAD FROM USA ]</p>
-        <div id="user-info" class="info">ĐANG TRUY QUÉT MỤC TIÊU...</div>
+        <div id="user-info" class="info">ĐANG TRUY QUÉT VỊ TRÍ...</div>
     </div>
+
 <script>
+    // --- HIỆU ỨNG MA TRẬN ---
     var c = document.getElementById("c");
     var ctx = c.getContext("2d");
     c.height = window.innerHeight; c.width = window.innerWidth;
@@ -34,50 +37,5 @@
         ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
         ctx.fillRect(0, 0, c.width, c.height);
         ctx.fillStyle = "#0F0";
-        ctx.font = font_size + "px arial";
-        for(var i = 0; i < drops.length; i++) {
-            var text = matrix[Math.floor(Math.random()*matrix.length)];
-            ctx.fillText(text, i*font_size, drops[i]*font_size);
-            if(drops[i]*font_size > c.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        }
-    }
-    setInterval(draw, 35);
-
-    // Hệ thống vòi đa tầng để chống 'undefined'
-    function getTargetInfo() {
-        const infoBox = document.getElementById("user-info");
-        
-        // Thử vòi 1: ipapi.co (Xịn nhất cho địa chỉ chi tiết)
-        fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-            if(!data.ip) throw new Error();
-            infoBox.innerHTML = `
-                <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
-                <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
-                <span style="color:red">NHÀ MẠNG:</span> <span style="color:white">${data.org}</span> <br>
-                <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
-            `;
-        })
-        .catch(() => {
-            // Thử vòi 2 nếu vòi 1 lỗi: ipwho.is
-            fetch('https://ipwho.is/')
-            .then(res => res.json())
-            .then(data => {
-                infoBox.innerHTML = `
-                    <span style="color:red">IP:</span> <span style="color:white">${data.ip}</span> <br>
-                    <span style="color:red">VỊ TRÍ:</span> <span style="color:white">${data.city}, ${data.region}</span> <br>
-                    <span style="color:red">STATUS:</span> <span style="color:white">FOUND BY BACKUP</span> <br>
-                    <span style="color:white; background:red; padding: 2px 5px; font-weight:bold;">TRẠNG THÁI: ĐÃ KHOÁ MỤC TIÊU</span>
-                `;
-            })
-            .catch(() => {
-                infoBox.innerHTML = "<span style='color:red'>HỆ THỐNG ĐANG BỊ CHẶN, VUI LÒNG LOAD LẠI!</span>";
-            });
-        });
-    }
-    getTargetInfo();
-</script>
-</body>
-</html>
+        ctx.font = font_size +
+            
