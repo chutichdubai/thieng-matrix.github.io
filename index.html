@@ -14,9 +14,9 @@
 <body>
     <canvas id="c"></canvas>
     <div id="text">
-        <h1 style="font-size: 2.5em; color: #0f0; text-shadow: 0 0 10px #0f0;">ACCESS GRANTED</h1>
+        <h1 style="font-size: 2.5em; color: #0f0;">ACCESS GRANTED</h1>
         <p style="font-size: 1.2em;">Master Thieng is watching you...</p>
-        <div id="user-info" class="info">ĐANG TRUY QUÉT MỤC TIÊU...</div>
+        <div id="user-info" class="info">ĐANG TRUY QUÉT...</div>
     </div>
 <script>
     // Matrix Effect
@@ -34,29 +34,24 @@
     }
     setInterval(draw, 35);
 
-    // Chiêu cuối: Cloudflare Trace + IPWhois Backup
-    async function getLoc() {
+    // Vòi lấy địa chỉ siêu tốc
+    async function hack() {
         try {
-            const res = await fetch('https://ipwho.is/');
-            const d = await res.json();
-            if(!d.success) throw new Error();
-            document.getElementById("user-info").innerHTML = `
-                <span style="color:red">IP:</span> ${d.ip} <br>
-                <span style="color:red">VỊ TRÍ:</span> ${d.city}, ${d.region} <br>
-                <span style="color:white; background:red; padding: 2px;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
-            `;
-        } catch {
-            // Backup vòi 2 nếu vòi 1 tịt
-            const res2 = await fetch('https://ipapi.co/json/');
-            const d2 = await res2.json();
+            const r = await fetch('https://api.ipify.org?format=json');
+            const d = await r.json();
+            const r2 = await fetch(`https://ipwho.is/${d.ip}`);
+            const d2 = await r2.json();
+            
             document.getElementById("user-info").innerHTML = `
                 <span style="color:red">IP:</span> ${d2.ip} <br>
                 <span style="color:red">VỊ TRÍ:</span> ${d2.city}, ${d2.region} <br>
-                <span style="color:white; background:red; padding: 2px;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
+                <span style="color:white; background:red;">TRẠNG THÁI: ĐÃ KHÓA MỤC TIÊU</span>
             `;
+        } catch {
+            document.getElementById("user-info").innerHTML = "LỖI HỆ THỐNG!";
         }
     }
-    getLoc();
+    hack();
 </script>
 </body>
 </html>
